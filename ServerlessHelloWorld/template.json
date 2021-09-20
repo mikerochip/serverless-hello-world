@@ -1,0 +1,59 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "An AWS Serverless Application.",
+
+  "Globals": {
+    "Api": {
+      "OpenApiVersion": "3.0.1"
+    },
+    "Function": {
+      "Runtime": "dotnetcore3.1",
+      "MemorySize": 512,
+      "Timeout": 30,
+      "Tracing": "PassThrough",
+      "CodeUri": "bin/Release/netcoreapp3.1/publish",
+      "AutoPublishAlias": "Live",
+      "DeploymentPreference": {
+        "Type": "AllAtOnce"
+      }
+    }
+  },
+  
+  "Resources": {
+    "Hello": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "ServerlessHelloWorld::ServerlessHelloWorld.Function::HandleHello",
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "Events": {
+          "Get": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/",
+              "Method": "GET"
+            }
+          }
+        }
+      }
+    },
+    "HelloLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": { "Fn::Sub": "/aws/lambda/${Hello}" },
+        "RetentionInDays": 1
+      }
+    }
+  },
+  
+  "Outputs": {
+    "ApiURL": {
+      "Description": "API endpoint URL for Prod environment",
+      "Value": {
+        "Fn::Sub": "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+      }
+    }
+  }
+}

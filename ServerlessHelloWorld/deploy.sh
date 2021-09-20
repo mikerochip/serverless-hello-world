@@ -1,0 +1,1 @@
+dotnet lambda deploy-serverless ServerlessHelloWorld --s3-bucket serverless-hello-world-artifacts --s3-prefix ServerlessHelloWorld/
